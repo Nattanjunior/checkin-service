@@ -20,17 +20,13 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
     });
 
     const token = await reply.jwtSign(
-      {},
-      {
-        sign: {
-          sub: user.id,
-        },
-      },
+      { role: user.role, },
+      { sign: { sub: user.id, }, },
     )
 
 
     const refreshToken = await reply.jwtSign(
-      {},
+      { role: user.role, },
       {
         sign: {
           sub: user.id,

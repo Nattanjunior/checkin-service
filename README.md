@@ -156,6 +156,3 @@ npm run test:e2e
 npm run test:coverage
 ```
 
-## Resumo
-
-Esta API foi construída para exercitar autenticação, autorização, persistência com Prisma, organização em camadas e regras de geolocalização com latitude e longitude no contexto de check-ins em academias.

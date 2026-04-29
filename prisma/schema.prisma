@@ -27,13 +27,15 @@ model User {
 model Checkin {
   id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
-  validetedAt DateTime?
+  validatedAt DateTime?
+  date        DateTime
 
   user    User   @relation(fields: [user_id], references: [id])
   user_id String
   gym     Gym    @relation(fields: [gym_id], references: [id])
   gym_id  String
 
+  @@unique([user_id, date])
   @@map("check_ins")
 }
 

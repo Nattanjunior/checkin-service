@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/create-and-authenticate-user';
 import { prisma } from '@/lib/prisma';
+import dayjs from 'dayjs';
 
 describe('Check-In History (e2e)', () => {
   beforeAll(async () => {
@@ -30,11 +31,13 @@ describe('Check-In History (e2e)', () => {
       data: [
         {
           gym_id: gym.id,
-          user_id: user.id
+          user_id: user.id,
+          date: dayjs().toDate()
         },
         {
           gym_id: gym.id,
-          user_id: user.id
+          user_id: user.id,
+          date: dayjs(1, 'day').toDate()
         },
       ]
     })

@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { app } from '@/app'
 import { createAndAuthenticateUser } from '@/utils/create-and-authenticate-user';
 import { prisma } from '@/lib/prisma';
+import dayjs from 'dayjs';
 
 describe('Validate Check-In (e2e)', () => {
 
@@ -17,7 +18,13 @@ describe('Validate Check-In (e2e)', () => {
   it('should be able to validate a check-in', async () => {
     const { token } = await createAndAuthenticateUser(app, true)
 
-    const user = await prisma.user.findFirstOrThrow();
+    const user = await prisma.user.findFirstOrThrow(
+      {
+        where: {
+          role: 'ADMIN'
+        }
+      }
+    );
 
     const gym = await prisma.gym.create({
       data: {
@@ -27,10 +34,14 @@ describe('Validate Check-In (e2e)', () => {
       }
     });
 
+    const now = new Date()
+
     let checkIn = await prisma.checkin.create({
       data: {
         gym_id: gym.id,
-        user_id: user.id
+        user_id: user.id,
+        date: now,
+        createdAt: now,
       }
     })
 
@@ -47,7 +58,7 @@ describe('Validate Check-In (e2e)', () => {
       },
     })
 
-    expect(checkIn.validetedAt).toEqual(expect.any(Date))
+    expect(checkIn.validatedAt).toEqual(expect.any(Date))
 
   });
 });

@@ -1,10 +1,12 @@
-import { Checkin } from "@prisma/client";
+import dayjs from 'dayjs';
+import { Checkin, Prisma } from "@prisma/client";
 import { CheckInsRepository } from "../repositories/check-ins-repository";
 import { GymRepository } from "../repositories/gym-repository";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 import { getDistanceBetweenCoordinates } from "../utils/get-distance-between.coordinates";
 import { MaxDistanceError } from "./errors/Max-distance-error";
 import { MaxNumberOfCheckInsError } from "./errors/max-number-of-check-ins-error";
+import { DuplicateCheckInError } from './errors/duplicate-check-In-error';
 
 interface CheckInUseCaseRequest {
   user_id: string;
@@ -25,6 +27,7 @@ export class CheckInUseCase {
 
   async execute({ user_id, gym_id, userLatitude, userLongitude }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
     const gym = await this.gymsRepository.findById(gym_id)
+    const today = dayjs().startOf('day').toDate()
 
     if (!gym) {
       throw new ResourceNotFoundError();
@@ -44,22 +47,27 @@ export class CheckInUseCase {
       throw new MaxDistanceError();
     }
 
-    const checkInOnSameDay = await this.checkInsRepository.findByUserIdOneDate(
-      user_id,
-      new Date(),
-    )
+    try {
+      const checkIn = await this.checkInsRepository.create({
+        gym_id,
+        user_id,
+        date: today,
+      })
 
-    if (checkInOnSameDay) {
-      throw new MaxNumberOfCheckInsError();
-    }
+      return { checkIn }
+    } catch (err: unknown) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new MaxNumberOfCheckInsError()
+      }
 
-    const checkIn = await this.checkInsRepository.create({
-      gym_id,
-      user_id
-    })
+      if (err instanceof DuplicateCheckInError) {
+        throw new MaxNumberOfCheckInsError()
+      }
 
-    return {
-      checkIn
+      throw err
     }
   }
 }

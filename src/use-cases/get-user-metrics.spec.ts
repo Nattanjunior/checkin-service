@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import dayjs from "dayjs";
 import { InMemoryCheckInRepository } from "../repositories/in-memory/in-memory-check-ins-repository";
 import { GetUserMetricsUseCase } from "./get-user-metrics";
 
@@ -15,12 +16,14 @@ describe("Get User Metrics Use Case", () => {
 
     await checkInsRepository.create({
       gym_id: 'gym-001',
-      user_id: 'user-001'
+      user_id: 'user-001',
+      date: dayjs().toDate()
     })
 
     await checkInsRepository.create({
       gym_id: 'gym-002',
-      user_id: 'user-001'
+      user_id: 'user-001',
+      date: dayjs(1, 'day').toDate()
     })
 
     const { checkInsCount } = await sut.execute({

@@ -17,7 +17,9 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
       where: {
         id: data.id
       },
-      data,
+      data: {
+        validatedAt: data.validatedAt ? new Date(data.validatedAt) : new Date(),
+      },
     })
 
     return checkIn;

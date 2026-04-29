@@ -7,12 +7,18 @@ export async function validate(request: FastifyRequest, reply: FastifyReply) {
     checkInId: z.string().uuid(),
   })
 
-  const { checkInId } = validateCheckInParamsSchema.parse(request.params);
+  try {
+    const { checkInId } = validateCheckInParamsSchema.parse(request.params);
 
-  const validateCheckInUseCase = makeValidateCheckInUseCase()
-  await validateCheckInUseCase.execute({
-    checkInId,
-  });
+    const validateCheckInUseCase = makeValidateCheckInUseCase()
+    await validateCheckInUseCase.execute({
+      checkInId,
+    });
 
-  return reply.status(204).send();
+    return reply.status(204).send();
+
+  } catch (error) {
+    throw error;
+  }
+
 }

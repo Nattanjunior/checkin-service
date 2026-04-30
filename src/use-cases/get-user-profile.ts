@@ -1,8 +1,7 @@
 import { UsersRepository } from "@/repositories/users-repository";
 import { User } from "@prisma/client";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
-import { redis } from "../lib/redis";
-import { getOrSetCache } from "@/lib/cache";
+import { getOrSetCache } from "../lib/cache";
 
 interface GetUserProfileUseCaseRequest {
   userId: string;

@@ -1,7 +1,6 @@
 import { Gym } from "@prisma/client";
 import { GymRepository } from "@/repositories/gym-repository";
-import { redis } from "../lib/redis";
-import { getOrSetCache } from "@/lib/cache";
+import { getOrSetCache } from "../lib/cache";
 
 interface FeatchNearbyGymsUseCaseRequest {
   userLatitude: number;
